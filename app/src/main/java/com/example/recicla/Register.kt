@@ -4,65 +4,45 @@ import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.StrictMode
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.view.GravityCompat
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONException
+import kotlinx.android.synthetic.main.activity_register.*
 
-class MainActivity : AppCompatActivity() {
+class Register : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
+        setContentView(R.layout.activity_register)
 
-        btnLogin.setOnClickListener {
-            BuscarUsername()
+        btnRegister.setOnClickListener{
+            Registrar()
         }
 
-        register.setOnClickListener{
-            startActivity(Intent(this,Register::class.java))
+        iniciarsesion.setOnClickListener{
+            startActivity(Intent(this,MainActivity::class.java))
         }
+    }
 
-        val navigation = findViewById<BottomNavigationView>(R.id.menu);
-        navigation?.setOnItemSelectedListener{
-            when(it.itemId) {
-                R.id.action_calendar -> {
-                    startActivity(Intent(this,CalendarEvents::class.java))
-                }
-                R.id.action_top10->{
-                    startActivity(Intent(this,TopTenAll::class.java))
-                }
-                R.id.action_statics->{
-                    startActivity(Intent(this,Estadisticas::class.java))
-                }
-            }
-            false
-        }
-    }fun BuscarUsername() {
+    fun Registrar() {
         AsyncTask.execute {
 
-            val username = txtUsuario.text.toString()
+            val username = txtUsername.text.toString()
+            val email = txtEmail.text.toString()
             val password = txtPassword.text.toString()
+            val first_name = txtFirstName.text.toString()
+            val last_name = txtLastName.text.toString()
+            val address = txtAddress.text.toString()
 
             val queue = Volley.newRequestQueue(this)
-            var url = getString(R.string.urlAPI) +"/api/usuarios/loginandroid"
+            var url = getString(R.string.urlAPI) +"/api/usuarios/register"
             val postRequest: StringRequest = object : StringRequest(
                 Request.Method.POST, url,
                 Response.Listener { response -> // response
                     Toast.makeText(
                         applicationContext,
-                        "Bienvenido(a) $username",
+                        "Gracias por su registro",
                         Toast.LENGTH_LONG
                     ).show()
                     startActivity(Intent(this,CalendarEvents::class.java))
@@ -70,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 Response.ErrorListener { response ->// error
                     Toast.makeText(
                         applicationContext,
-                        "Usuario o contraseña incorrecta",
+                        "No se pudo registrar",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -79,7 +59,11 @@ class MainActivity : AppCompatActivity() {
                     val params: MutableMap<String, String> =
                         HashMap()
                     params["username"] = username
+                    params["email"] = email
                     params["password"] = password
+                    params["first_name"] = first_name
+                    params["last_name"] = last_name
+                    params["address"] = address
                     return params
                 }
             }
@@ -87,6 +71,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
 }
